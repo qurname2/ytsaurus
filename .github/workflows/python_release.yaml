@@ -5,6 +5,8 @@ on:
     tags:
       - 'python-test/ytsaurus-*/[0-9]+.[0-9]+.*'
       - 'python/ytsaurus-*/[0-9]+.[0-9]+.*'
+    branches:
+      - yson_bindings_build
 
 jobs:
   start-vm:
@@ -55,15 +57,17 @@ jobs:
       - name: Parse tag
         id: tag
         run: |
-          tmp=${GITHUB_REF#refs/*/}; if [[ "${tmp%%/*}" == "python-test" ]]
-          then
+          tmp=${GITHUB_REF#refs/*/};
+          if [[ "${tmp%%/*}" == "python-test" ]] then
               echo "RELEASE_TYPE=test" >> $GITHUB_OUTPUT
-          elif [[ "${tmp%%/*}" == "python" ]]
-          then
+          elif [[ "${tmp%%/*}" == "python" ]] then
               echo "RELEASE_TYPE=prod" >> $GITHUB_OUTPUT
-          fi
-          echo "RELEASE_VERSION=$(echo ${GITHUB_REF#refs/*/python*/*/})" >> $GITHUB_OUTPUT
-          echo "PACKAGE_NAME=$(tmp=${GITHUB_REF#refs/*/python*/}; echo ${tmp%%/*})" >> $GITHUB_OUTPUT
+          else
+              echo "RELEASE_TYPE=dev" >> $GITHUB_OUTPUT
+              echo "PACKAGE_NAME=ytsaurus-yson" >> $GITHUB_OUTPUT
+          endif
+          # echo "RELEASE_VERSION=$(echo ${GITHUB_REF#refs/*/python*/*/})" >> $GITHUB_OUTPUT
+          # echo "PACKAGE_NAME=$(tmp=${GITHUB_REF#refs/*/python*/}; echo ${tmp%%/*})" >> $GITHUB_OUTPUT
 
       - name: Configure
         run: |
@@ -85,6 +89,11 @@ jobs:
           export CCACHE_REMOTE_ONLY=true
           export CCACHE_REMOTE_STORAGE="${{ vars.CCACHE_REMOTE_STORAGE }}"
           ninja yson_lib driver_lib driver_rpc_lib
+
+      - name: Build ya make
+        run: |
+          yt/yt/scripts/build_python_libraries_with_docker.sh
+          cp ../ya_build/yt/yt/python/yson_shared/yson_lib.so ../build/yt/yt/python/yson_shared/yson_lib.so
 
       - name: Build package
         id: build
