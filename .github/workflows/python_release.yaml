@@ -92,7 +92,7 @@ jobs:
 
       - name: Build ya make
         run: |
-          yt/yt/scripts/build_python_libraries_with_docker.sh
+          ytsaurus/yt/yt/scripts/build_python_libraries_with_docker.sh
           cp ../ya_build/yt/yt/python/yson_shared/yson_lib.so ../build/yt/yt/python/yson_shared/yson_lib.so
 
       - name: Build package
