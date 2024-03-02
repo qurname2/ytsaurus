@@ -58,14 +58,14 @@ jobs:
         id: tag
         run: |
           tmp=${GITHUB_REF#refs/*/};
-          if [[ "${tmp%%/*}" == "python-test" ]] then
+          if [[ "${tmp%%/*}" == "python-test" ]]; then
               echo "RELEASE_TYPE=test" >> $GITHUB_OUTPUT
-          elif [[ "${tmp%%/*}" == "python" ]] then
+          elif [[ "${tmp%%/*}" == "python" ]]; then
               echo "RELEASE_TYPE=prod" >> $GITHUB_OUTPUT
           else
               echo "RELEASE_TYPE=dev" >> $GITHUB_OUTPUT
               echo "PACKAGE_NAME=ytsaurus-yson" >> $GITHUB_OUTPUT
-          endif
+          fi
           # echo "RELEASE_VERSION=$(echo ${GITHUB_REF#refs/*/python*/*/})" >> $GITHUB_OUTPUT
           # echo "PACKAGE_NAME=$(tmp=${GITHUB_REF#refs/*/python*/}; echo ${tmp%%/*})" >> $GITHUB_OUTPUT
 
