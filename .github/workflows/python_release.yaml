@@ -64,6 +64,7 @@ jobs:
               echo "RELEASE_TYPE=prod" >> $GITHUB_OUTPUT
           else
               echo "RELEASE_TYPE=dev" >> $GITHUB_OUTPUT
+              echo "RELEASE_VERSION=0.4.6" >> $GITHUB_OUTPUT
               echo "PACKAGE_NAME=ytsaurus-yson" >> $GITHUB_OUTPUT
           fi
           # echo "RELEASE_VERSION=$(echo ${GITHUB_REF#refs/*/python*/*/})" >> $GITHUB_OUTPUT
@@ -110,6 +111,8 @@ jobs:
 
           ytsaurus_python=$(realpath "../build/ytsaurus_python")
           mv "${ytsaurus_python}/$(echo ${{ steps.tag.outputs.PACKAGE_NAME }} | sed -E "s/-/_/g")_dist" dist
+          
+          pip3 install auditwheel
 
           pip3 install sphinx
 
@@ -133,7 +136,7 @@ jobs:
       - build
       - checkout
       - start-vm
-    if: ${{ needs.build.outputs.release_type == 'test' }}
+    # if: ${{ needs.build.outputs.release_type == 'test' }}
     runs-on: ${{ needs.start-vm.outputs.label }}
     steps:
       - name: Publish pydoc

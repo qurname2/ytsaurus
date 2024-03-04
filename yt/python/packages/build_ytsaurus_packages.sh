@@ -78,8 +78,7 @@ fi
 
 cd ${ytsaurus_python}
 
-if [[ ${ytsaurus_package_name} == "" ]]
-then
+if [[ ${ytsaurus_package_name} == "" ]]; then
     packages=("ytsaurus-client" "ytsaurus-yson" "ytsaurus-local" "ytsaurus-native-driver")
 else
     packages=("${ytsaurus_package_name}")
@@ -91,6 +90,7 @@ for package in ${packages[@]}; do
     if [[ ${package} == "ytsaurus-native-driver" ]] || [[ ${package} == "ytsaurus-yson" ]] 
     then
         python3 setup.py bdist_wheel --py-limited-api cp34 --dist-dir ${dist_dir}
+        auditwheel repair "${dist_dir}/${package}*.whl" -w "${dist_dir}" --plat manylinux_2014_x86_64
     else
         python3 setup.py bdist_wheel --universal --dist-dir ${dist_dir}
     fi
