@@ -87,10 +87,11 @@ fi
 for package in ${packages[@]}; do
     cp "${ytsaurus_source_path}/yt/python/packages/${package}/setup.py" .
     dist_dir="$(echo ${package} | sed -e s/-/_/g)_dist"
+    package_undescored=$(echo -e $package | tr '-' '_')
     if [[ ${package} == "ytsaurus-native-driver" ]] || [[ ${package} == "ytsaurus-yson" ]] 
     then
         python3 setup.py bdist_wheel --py-limited-api cp34 --dist-dir ${dist_dir}
-        auditwheel repair "${dist_dir}/${package}*.whl" -w "${dist_dir}" --plat manylinux2014_x86_64
+        auditwheel repair "${dist_dir}/${package_undescored}*.whl" -w "${dist_dir}" --plat manylinux2014_x86_64
     else
         python3 setup.py bdist_wheel --universal --dist-dir ${dist_dir}
     fi
